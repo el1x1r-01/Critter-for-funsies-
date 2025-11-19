@@ -16,13 +16,15 @@ namespace Critter__for_funsies_
 
         Texture2D fenceForeTexture, fenceBackTexture, fieldTexture, frodoTexture;
 
-        Vector2 frodoSpeed;
+        Vector2 frodoSpeed, frodoFontVector2;
 
         float seconds;
 
         SpriteEffects frodoEffect;
 
         int frodo;
+
+        SpriteFont frodoFont;
 
         public Game1()
         {
@@ -64,6 +66,7 @@ namespace Critter__for_funsies_
             fieldTexture = Content.Load<Texture2D>("Field V2");
 
             frodoTexture = Content.Load<Texture2D>("FrodoBunny-1.png");
+            frodoFont = Content.Load<SpriteFont>("Frodo");
         }
 
         protected override void Update(GameTime gameTime)
@@ -73,6 +76,7 @@ namespace Critter__for_funsies_
 
             // TODO: Add your update logic here
 
+            frodoFontVector2 = new Vector2((frodoRect.X) + 50, (frodoRect.Y) + 115);
             seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (seconds > 0)
@@ -113,11 +117,29 @@ namespace Critter__for_funsies_
                 {
 
                 }
+
+                if (frodoSpeed.Y < 0)
+                {
+                    frodoSpeed.Y = (generator.Next(-5, 1));
+                }
+                else
+                {
+                    frodoSpeed.Y = (generator.Next(0, 6));
+                }
             }
 
             if (frodoRect.Bottom > 750 || frodoRect.Top < 100)
             {
                 frodoSpeed.Y *= -1;
+
+                if (frodoSpeed.X < 0)
+                {
+                    frodoSpeed.X = (generator.Next(-5, 1));
+                }
+                else
+                {
+                    frodoSpeed.X = (generator.Next(0, 6));
+                }
             }
 
             base.Update(gameTime);
@@ -137,6 +159,8 @@ namespace Critter__for_funsies_
             _spriteBatch.Draw(frodoTexture, frodoRect, Color.White);
 
             _spriteBatch.Draw(fenceForeTexture, fenceForeRect, Color.White);
+
+            _spriteBatch.DrawString(frodoFont, "Frodo", frodoFontVector2, Color.White);
 
             _spriteBatch.End();
 
