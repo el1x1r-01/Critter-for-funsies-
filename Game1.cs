@@ -12,19 +12,21 @@ namespace Critter__for_funsies_
 
         Random generator = new Random();
 
-        Rectangle window, fenceForeRect, fenceBackRect, fieldRect, frodoRect;
+        Rectangle window, fenceForeRect, fenceBackRect, fieldRect, frodoRect, samRect, pipRect, carrotRect;
 
-        Texture2D fenceForeTexture, fenceBackTexture, fieldTexture, frodoTexture;
+        Texture2D fenceForeTexture, fenceBackTexture, fieldTexture, frodoTexture, samTexture, pipTexture, carrotTexture;
 
-        Vector2 frodoSpeed, frodoFontVector2;
+        Vector2 frodoSpeed, frodoFontVector2, samSpeed, samFontVector2, pipSpeed, pipFontVector2;
 
         float seconds;
 
-        SpriteEffects frodoEffect;
+        SpriteEffects frodoEffect, samEffect, pipEffect;
 
-        int frodo;
+        int frodo, sam, pip;
 
-        SpriteFont frodoFont;
+        SpriteFont frodoFont, samFont, pipFont;
+
+        MouseState mouseState;
 
         public Game1()
         {
@@ -50,6 +52,16 @@ namespace Critter__for_funsies_
             frodoSpeed = new Vector2(2, 2);
             frodo = 1;
 
+            samRect = new Rectangle(generator.Next(100, 600), generator.Next(100, 600), 150, 150);
+            samSpeed = new Vector2(2, 2);
+            sam = 1;
+
+            pipRect = new Rectangle(generator.Next(100, 600), generator.Next(100, 600), 175, 175);
+            pipSpeed = new Vector2(2, 2);
+            pip = 1;
+
+            carrotRect = new Rectangle(-100, -100, 50, 50);
+
             seconds = 0;
 
             base.Initialize();
@@ -67,6 +79,14 @@ namespace Critter__for_funsies_
 
             frodoTexture = Content.Load<Texture2D>("FrodoBunny-1.png");
             frodoFont = Content.Load<SpriteFont>("Frodo");
+
+            samTexture = Content.Load<Texture2D>("SamwiseBunny-1.png");
+            samFont = Content.Load<SpriteFont>("Samwise");
+
+            pipTexture = Content.Load<Texture2D>("PippinBunny-1.png");
+            pipFont = Content.Load<SpriteFont>("Pippin");
+
+            carrotTexture = Content.Load<Texture2D>("Carrot");
         }
 
         protected override void Update(GameTime gameTime)
@@ -74,9 +94,10 @@ namespace Critter__for_funsies_
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            mouseState = Mouse.GetState();
+
             // TODO: Add your update logic here
 
-            frodoFontVector2 = new Vector2((frodoRect.X) + 50, (frodoRect.Y) + 115);
             seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (seconds > 0)
@@ -100,23 +121,63 @@ namespace Critter__for_funsies_
                     frodoTexture = Content.Load<Texture2D>("FrodoBunny-4.png");
                     frodo = 1;
                 }
+
+                sam++;
+
+                if (sam == 1)
+                {
+                    samTexture = Content.Load<Texture2D>("SamwiseBunny-1.png");
+                }
+                else if (sam == 10)
+                {
+                    samTexture = Content.Load<Texture2D>("SamwiseBunny-2.png");
+                }
+                else if (sam == 20)
+                {
+                    samTexture = Content.Load<Texture2D>("SamwiseBunny-3.png");
+                }
+                else if (sam == 30)
+                {
+                    samTexture = Content.Load<Texture2D>("SamwiseBunny-4.png");
+                    sam = 1;
+                }
+
+                pip++;
+
+                if (pip == 1)
+                {
+                    pipTexture = Content.Load<Texture2D>("PippinBunny-1.png");
+                }
+                else if (pip == 10)
+                {
+                    pipTexture = Content.Load<Texture2D>("PippinBunny-2.png");
+                }
+                else if (pip == 20)
+                {
+                    pipTexture = Content.Load<Texture2D>("PippinBunny-3.png");
+                }
+                else if (pip == 30)
+                {
+                    pipTexture = Content.Load<Texture2D>("PippinBunny-4.png");
+                    pip = 1;
+                }
             }
 
             frodoRect.X += (int)frodoSpeed.X;
             frodoRect.Y += (int)frodoSpeed.Y;
 
+            if (frodoSpeed.X > 0)
+            {
+                frodoEffect = SpriteEffects.FlipHorizontally;
+            }
+            else if (frodoSpeed.X < 0)
+            {
+                frodoEffect = SpriteEffects.None;
+            }
+
             if (frodoRect.Right > 735 || frodoRect.Left < 75)
             {
                 frodoSpeed.X *= -1;
-
-                if (frodoSpeed.X > 0)
-                {
-
-                }
-                if (frodoSpeed.X < 0)
-                {
-
-                }
 
                 if (frodoSpeed.Y < 0)
                 {
@@ -142,7 +203,175 @@ namespace Critter__for_funsies_
                 }
             }
 
+            if (frodoRect.Contains(mouseState.Position))
+            {
+                frodoFontVector2 = new Vector2((frodoRect.X) + 50, (frodoRect.Y) + 115);
+            }
+            else
+            {
+                frodoFontVector2 = new Vector2(-100, -100);
+            }
+
+            if (frodoRect.X <= 0 || frodoRect.Left >= 800 || frodoRect.Y <= 0 || frodoRect.Bottom >= 800)
+            {
+                frodoRect.X = 350;
+                frodoRect.Y = 350;
+            }
+
+            if (frodoRect.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
+            {
+                frodoRect.X = (mouseState.X - 50);
+                frodoRect.Y = (mouseState.Y - 50);
+
+                if (mouseState.X < 75 || mouseState.X > 700 || mouseState.Y < 150 || mouseState.Y > 625)
+                {
+                    frodoRect.X = 350;
+                    frodoRect.Y = 350;
+                }
+            }
+
+            samRect.X += (int)samSpeed.X;
+            samRect.Y += (int)samSpeed.Y;
+
+            if (samSpeed.X > 0)
+            {
+                samEffect = SpriteEffects.FlipHorizontally;
+            }
+            else if (samSpeed.X < 0)
+            {
+                samEffect = SpriteEffects.None;
+            }
+
+            if (samRect.Right > 735 || samRect.Left < 75)
+            {
+                samSpeed.X *= -1;
+
+                if (samSpeed.Y < 0)
+                {
+                    samSpeed.Y = (generator.Next(-5, 1));
+                }
+                else
+                {
+                    samSpeed.Y = (generator.Next(0, 6));
+                }
+            }
+
+            if (samRect.Bottom > 750 || samRect.Top < 100)
+            {
+                samSpeed.Y *= -1;
+
+                if (samSpeed.X < 0)
+                {
+                    samSpeed.X = (generator.Next(-5, 1));
+                }
+                else
+                {
+                    samSpeed.X = (generator.Next(0, 6));
+                }
+            }
+
+            if (samRect.Contains(mouseState.Position))
+            {
+                samFontVector2 = new Vector2((samRect.X) + 40, (samRect.Y) + 115);
+            }
+            else
+            {
+                samFontVector2 = new Vector2(-100, -100);
+            }
+
+            if (samRect.X <= 0 || samRect.Left >= 800 || samRect.Y <= 0 || samRect.Bottom >= 800)
+            {
+                samRect.X = 350;
+                samRect.Y = 350;
+            }
+
+            if (samRect.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
+            {
+                samRect.X = (mouseState.X - 50);
+                samRect.Y = (mouseState.Y - 50);
+
+                if (mouseState.X < 75 || mouseState.X > 735 || mouseState.Y < 150 || mouseState.Y > 650)
+                {
+                    samRect.X = 350;
+                    samRect.Y = 350;
+                }
+            }
+
+            pipRect.X += (int)pipSpeed.X;
+            pipRect.Y += (int)pipSpeed.Y;
+
+            if (pipSpeed.X > 0)
+            {
+                pipEffect = SpriteEffects.FlipHorizontally;
+            }
+            else if (pipSpeed.X < 0)
+            {
+                pipEffect = SpriteEffects.None;
+            }
+
+            if (pipRect.Right > 735 || pipRect.Left < 75)
+            {
+                pipSpeed.X *= -1;
+
+                if (pipSpeed.Y < 0)
+                {
+                    pipSpeed.Y = (generator.Next(-5, 1));
+                }
+                else
+                {
+                    pipSpeed.Y = (generator.Next(0, 6));
+                }
+            }
+
+            if (pipRect.Bottom > 750 || pipRect.Top < 100)
+            {
+                pipSpeed.Y *= -1;
+
+                if (pipSpeed.X < 0)
+                {
+                    pipSpeed.X = (generator.Next(-5, 1));
+                }
+                else
+                {
+                    pipSpeed.X = (generator.Next(0, 6));
+                }
+            }
+
+            if (pipRect.Contains(mouseState.Position))
+            {
+                pipFontVector2 = new Vector2((pipRect.X) + 70, (pipRect.Y) + 130);
+            }
+            else
+            {
+                pipFontVector2 = new Vector2(-100, -100);
+            }
+
+            if (pipRect.X <= 0 || pipRect.Left >= 800 || pipRect.Y <= 0 || pipRect.Bottom >= 800)
+            {
+                pipRect.X = 350;
+                pipRect.Y = 350;
+            }
+
+            if (pipRect.Contains(mouseState.Position) && mouseState.LeftButton == ButtonState.Pressed)
+            {
+                pipRect.X = (mouseState.X - 50);
+                pipRect.Y = (mouseState.Y - 50);
+
+                if (mouseState.X < 75 || mouseState.X > 735 || mouseState.Y < 150 || mouseState.Y > 650)
+                {
+                    pipRect.X = 350;
+                    pipRect.Y = 350;
+                }
+            }
+
+            if (seconds > 5)
+            {
+                //carrotRect.X = generator.Next(100, 600);
+                //carrotRect.Y = generator.Next(100, 600);
+            }
+
             base.Update(gameTime);
+         
         }
 
         protected override void Draw(GameTime gameTime)
@@ -156,11 +385,17 @@ namespace Critter__for_funsies_
             _spriteBatch.Draw(fieldTexture, fieldRect, Color.White);
             _spriteBatch.Draw(fenceBackTexture, fenceBackRect, Color.White);
 
-            _spriteBatch.Draw(frodoTexture, frodoRect, Color.White);
+            _spriteBatch.Draw(carrotTexture, carrotRect, Color.White);
+
+            _spriteBatch.Draw(frodoTexture, frodoRect, null, Color.White, 0f, Vector2.Zero, frodoEffect, 0f);
+            _spriteBatch.Draw(samTexture, samRect, null, Color.White, 0f, Vector2.Zero, samEffect, 0f);
+            _spriteBatch.Draw(pipTexture, pipRect, null, Color.White, 0f, Vector2.Zero, pipEffect, 0f);
 
             _spriteBatch.Draw(fenceForeTexture, fenceForeRect, Color.White);
 
             _spriteBatch.DrawString(frodoFont, "Frodo", frodoFontVector2, Color.White);
+            _spriteBatch.DrawString(samFont, "Samwise", samFontVector2, Color.White);
+            _spriteBatch.DrawString(pipFont, "Pippin", pipFontVector2, Color.White);
 
             _spriteBatch.End();
 
