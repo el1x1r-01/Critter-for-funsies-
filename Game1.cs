@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Critter__for_funsies_
 {
@@ -12,13 +13,13 @@ namespace Critter__for_funsies_
 
         Random generator = new Random();
 
-        Rectangle window, fenceForeRect, fenceBackRect, fieldRect, frodoRect, samRect, pipRect, carrotRect;
+        Rectangle window, fenceForeRect, fenceBackRect, fieldRect, frodoRect, samRect, pipRect, tempCarrotRect, heartRect;
 
-        Texture2D fenceForeTexture, fenceBackTexture, fieldTexture, frodoTexture, samTexture, pipTexture, carrotTexture;
+        Texture2D fenceForeTexture, fenceBackTexture, fieldTexture, frodoTexture, samTexture, pipTexture, carrotTexture, heartTexture;
 
         Vector2 frodoSpeed, frodoFontVector2, samSpeed, samFontVector2, pipSpeed, pipFontVector2;
 
-        float seconds;
+        float seconds, delay, frodoHeart, samHeart, pipHeart;
 
         SpriteEffects frodoEffect, samEffect, pipEffect;
 
@@ -60,7 +61,10 @@ namespace Critter__for_funsies_
             pipSpeed = new Vector2(2, 2);
             pip = 1;
 
-            carrotRect = new Rectangle(-100, -100, 50, 50);
+            for (int i = 0; i < 1; i++)
+            {
+                tempCarrotRect = new Rectangle(generator.Next(100, 600), generator.Next(100, 600), 75, 75);
+            }
 
             seconds = 0;
 
@@ -87,6 +91,7 @@ namespace Critter__for_funsies_
             pipFont = Content.Load<SpriteFont>("Pippin");
 
             carrotTexture = Content.Load<Texture2D>("Carrot");
+            heartTexture = Content.Load<Texture2D>("heart");
         }
 
         protected override void Update(GameTime gameTime)
@@ -364,10 +369,80 @@ namespace Critter__for_funsies_
                 }
             }
 
-            if (seconds > 5)
+            if (frodoRect.Contains(tempCarrotRect))
             {
-                //carrotRect.X = generator.Next(100, 600);
-                //carrotRect.Y = generator.Next(100, 600);
+                tempCarrotRect = new Rectangle(-100, -100, 75, 75);
+                frodoHeart = 300;
+            }
+            if (samRect.Contains(tempCarrotRect))
+            {
+                tempCarrotRect = new Rectangle(-100, -100, 75, 75);
+                samHeart = 300;
+            }
+            if (pipRect.Contains(tempCarrotRect))
+            {
+                tempCarrotRect = new Rectangle(-100, -100, 75, 75);
+                pipHeart = 300;
+            }
+
+            if (tempCarrotRect.X == -100)
+            {
+                delay = generator.Next(150, 1500);
+                tempCarrotRect = new Rectangle(-101, -100, 75, 75);
+            }
+            if(tempCarrotRect.X == -101)
+            {
+                delay--;
+
+                if (delay < 0)
+                {
+                    tempCarrotRect = new Rectangle(generator.Next(100, 600), generator.Next(100, 600), 75, 75);
+                }
+            }
+
+            if (frodoHeart > 0)
+            {
+                frodoHeart--;
+
+                if (frodoEffect == SpriteEffects.None)
+                {
+                    heartRect = new Rectangle((frodoRect.X + 20), (frodoRect.Y - 30), 50, 50);
+                }
+                else
+                {
+                    heartRect = new Rectangle((frodoRect.X + 70), (frodoRect.Y - 30), 50, 50);
+                }
+            }
+            if (samHeart > 0)
+            {
+                samHeart--;
+
+                if (samEffect == SpriteEffects.None)
+                {
+                    heartRect = new Rectangle((samRect.X + 20), (samRect.Y - 30), 50, 50);
+                }
+                else
+                {
+                    heartRect = new Rectangle((samRect.X + 70), (samRect.Y - 30), 50, 50);
+                }
+            }
+            if (pipHeart > 0)
+            {
+                pipHeart--;
+
+                if (pipEffect == SpriteEffects.None)
+                {
+                    heartRect = new Rectangle((pipRect.X + 20), (pipRect.Y - 30), 50, 50);
+                }
+                else
+                {
+                    heartRect = new Rectangle((pipRect.X + 95), (pipRect.Y - 30), 50, 50);
+                }
+            }
+
+            if (frodoHeart <= 0 && samHeart <= 0 && pipHeart <= 0)
+            {
+                heartRect = new Rectangle(-100, -100, 50, 50);
             }
 
             base.Update(gameTime);
@@ -385,7 +460,7 @@ namespace Critter__for_funsies_
             _spriteBatch.Draw(fieldTexture, fieldRect, Color.White);
             _spriteBatch.Draw(fenceBackTexture, fenceBackRect, Color.White);
 
-            _spriteBatch.Draw(carrotTexture, carrotRect, Color.White);
+            _spriteBatch.Draw(carrotTexture, tempCarrotRect, Color.White);
 
             _spriteBatch.Draw(frodoTexture, frodoRect, null, Color.White, 0f, Vector2.Zero, frodoEffect, 0f);
             _spriteBatch.Draw(samTexture, samRect, null, Color.White, 0f, Vector2.Zero, samEffect, 0f);
@@ -396,6 +471,8 @@ namespace Critter__for_funsies_
             _spriteBatch.DrawString(frodoFont, "Frodo", frodoFontVector2, Color.White);
             _spriteBatch.DrawString(samFont, "Samwise", samFontVector2, Color.White);
             _spriteBatch.DrawString(pipFont, "Pippin", pipFontVector2, Color.White);
+
+            _spriteBatch.Draw(heartTexture, heartRect, Color.White);
 
             _spriteBatch.End();
 
