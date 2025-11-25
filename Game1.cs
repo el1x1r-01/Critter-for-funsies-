@@ -91,7 +91,7 @@ namespace Critter__for_funsies_
             pipFont = Content.Load<SpriteFont>("Pippin");
 
             carrotTexture = Content.Load<Texture2D>("Carrot");
-            heartTexture = Content.Load<Texture2D>("heart");
+            heartTexture = Content.Load<Texture2D>("heart V3");
         }
 
         protected override void Update(GameTime gameTime)
@@ -432,11 +432,11 @@ namespace Critter__for_funsies_
 
                 if (pipEffect == SpriteEffects.None)
                 {
-                    heartRect = new Rectangle((pipRect.X + 20), (pipRect.Y - 30), 50, 50);
+                    heartRect = new Rectangle((pipRect.X + 30), (pipRect.Y - 30), 50, 50);
                 }
                 else
                 {
-                    heartRect = new Rectangle((pipRect.X + 95), (pipRect.Y - 30), 50, 50);
+                    heartRect = new Rectangle((pipRect.X + 85), (pipRect.Y - 30), 50, 50);
                 }
             }
 
